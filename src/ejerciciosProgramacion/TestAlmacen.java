@@ -13,36 +13,14 @@ public class TestAlmacen {
       opcion=s.nextInt();
       s.nextLine();
       switch(opcion) {
-        case 1://Crear jugador y añadirlo a la lista
-          String descrip;
-          int uni,max,min;
-          double precioCompra,precioVenta;
-          
-          System.out.println("Introduce una descripcion: ");
-          descrip=s.nextLine();
-          System.out.println("Introduce una cantidad de unidades: ");
-          uni=s.nextInt();
-          s.nextLine();
-          System.out.println("Introduce una cantidad minima: ");
-          min=s.nextInt();
-          s.nextLine();
-          System.out.println("Introduce una cantidad maxima: ");
-          max=s.nextInt();
-          s.nextLine();
-          System.out.println("Introduce una cantidad de compra: ");
-          precioCompra=s.nextDouble();
-          s.nextLine();
-          System.out.println("Introduce una cantidad de venta: ");
-          precioVenta=s.nextDouble();
-          s.nextLine();
-          
-          Almacen.alta(descrip,uni,max,min,precioCompra,precioVenta);
+        case 1://Crear jugador y añadirlo a la listaArticulos
+          Almacen.introducirDatos();
           break;
         case 2: //ToString de un articulo insertado
           int toString=controlCodigo();
           
           if(!Almacen.imprimirUno(toString)) { //Error si no encuentra el elemento
-            System.out.println("Elemento no encontrado en la lista");
+            System.out.println("Elemento no encontrado en la listaArticulos");
           }
           break;
         case 3://ToString de todos los elementos en el almacen
@@ -52,7 +30,7 @@ public class TestAlmacen {
           int eliminar=controlCodigo();
           
           if(!Almacen.baja(eliminar)) {//Control de error
-            System.out.println("No se pudo eliminar el articulo de la lista");
+            System.out.println("No se pudo eliminar el articulo de la listaArticulos");
             break;
           }
           
@@ -60,14 +38,8 @@ public class TestAlmacen {
           
           break;
         case 5://Modificar unidades de un articulo
-          String modif,letra;
-          
-          do {//Pedir datos 
-            System.out.println("Deseas incrementar(I) o decrementar(D): ");
-            letra=s.nextLine();
-            modif=letra.toUpperCase();
-          }while(!modif.equals("D") && !modif.equals("I"));
-          
+          String modif;
+          modif=Articulo.pedirTipoModificacion();
           Articulo.modificar(modif);
             break;
         case 6://Fin programa
@@ -81,6 +53,10 @@ public class TestAlmacen {
     }while(opcion!=6);
   }
 
+  /*
+   * Esta funcion es el menu del programa
+   */
+  
   public static void menu() {
     System.out.println("1.Crear articulo");
     System.out.println("2.Mostrar un articulo");
@@ -89,11 +65,18 @@ public class TestAlmacen {
     System.out.println("5.Modificar articulo");
     System.out.println("6.Salir");
   }
+  
+  /*
+   *Esta funcion permite controlar el codigo insertado por el usuario 
+   *
+   *@return int
+   */
+  
   public static int controlCodigo() {
     int codigo;
     Scanner s=new Scanner(System.in);
     do {
-      System.out.println("Inserta el codigo para buscar en la lista: ");
+      System.out.println("Inserta el codigo para buscar en la listaArticulos: ");
       codigo=s.nextInt();
       s.nextLine();
     }while(codigo<0);

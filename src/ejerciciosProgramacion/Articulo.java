@@ -8,14 +8,16 @@ public class Articulo {
   private String descripcion;
   static int nArticulos=0;
 
-   Articulo(String descrip,int uni,int max,int min,double precioCompra,double precioVenta){
+   Articulo(String descripcion,int cantidad,int cantidadMax,int cantidadMin,double precioCompra,double precioVenta){
      
-     if(uni<0) {
-       uni=20;
+     if(cantidad<0 || cantidad>cantidadMax || cantidad<cantidadMin) {
+       cantidad=20;
+       cantidadMax=100;
+       cantidadMin=5;
      }
-     if(max<0 || max<=min) {
-       max=100;
-       min=5;
+     if(cantidadMax<0 || cantidadMax<=cantidadMin) {
+       cantidadMax=100;
+       cantidadMin=5;
      }
      if(precioCompra<0) {
        precioCompra=10;
@@ -28,16 +30,17 @@ public class Articulo {
        precioCompra=10;
      }
      nArticulos++;
-     codigo=codigoAutomatico();
-     unidades=uni;
-     stockMax=max;
-     stockMin=min;
-     compra=precioCompra;
-     venta=precioVenta;
-     descripcion=descrip;
+     this.codigo=getCodigoAutomatico();
+     this.unidades=cantidad;
+     this.stockMax=cantidadMax;
+     this.stockMin=cantidadMin;
+     this.compra=precioCompra;
+     this.venta=precioVenta;
+     this.descripcion=descripcion;
    }
 
   //Getters
+   
   public int getCodigo() {
     return codigo;
   }
@@ -65,7 +68,14 @@ public class Articulo {
   public String getDescripcion() {
     return descripcion;
   }
+  
+  public static int getCodigoAutomatico(){
+    int n=nArticulos;
+    return n;
+  }
+  
   //Setters
+  
   public boolean setUnidades(int unidades) {
     if(unidades<0 || unidades>this.stockMax || unidades<this.stockMin) {
       return false;
@@ -112,52 +122,92 @@ public class Articulo {
 
   @Override
   public String toString() {
-    return ("Articulo["+this.codigo+"]."+"Descripcion: "+this.getDescripcion()+".Unidades: "+this.unidades+".Compra: "+this.getCompra()+".Venta: "+this.venta+".Stock minimo: "+this.getStockMin()+".Stock maximo: "+this.getStockMax()+"\n");
+    return ("Articulo["+this.codigo+"]."+"Descripcion: "+this.getDescripcion()+". Unidades: "+this.unidades+". Compra: "+this.getCompra()+". Venta: "+this.venta+". Stock minimo: "+this.getStockMin()+". Stock maximo: "+this.getStockMax()+"\n");
   }
-  public static int codigoAutomatico(){
-    int n=nArticulos;
-    return n;
-  }
-  public static void modificar(String modif) {
+  
+  /*
+   * Esta funcion permite aumentar o decrementar las unidades de un articulo
+   * 
+   * @param String
+   */
+  
+  public static void modificar(String tipoModificacion) {
     Scanner s=new Scanner(System.in);
-    if(modif.equals("I")) {//Si el usuario quiere incrementar unidades
-      int pos,num;
+    int posicion,cantidad;
+    if(tipoModificacion.equals("I")) {//Si el usuario quiere incrementar unidades
       
-      do {//Cantidad pedida
-        System.out.println("Inserta la cantidad para incrementar: ");
-        num=s.nextInt();
-        s.nextLine();
-      }while(num<0);
       
-      pos=TestAlmacen.controlCodigo(); //Codigo pedido
+      cantidad=pedirCantidad(tipoModificacion);//Pedir cantidad
       
-      if(!Almacen.modificarMercancia(num, pos)) {
+      posicion=TestAlmacen.controlCodigo(); //Pedir codigo
+      
+      if(!Almacen.modificarMercancia(cantidad, posicion)) {
         System.out.println("Mercancia no modificada");
       }
       else {
         System.out.println("Mercancia correctamente modificada");
         Almacen.imprimirTodos();
       }
-      
-      break;
     }
     else {//Si el usuario quiere decrementar unidades
-      int pos,num;
       
-      do {//Cantidad pedida
-        System.out.println("Inserta la cantidad para decrementar: ");
-        num=s.nextInt();
-        s.nextLine();
-      }while(num<0);
+      cantidad=pedirCantidad(tipoModificacion);//Pedir cantidad
       
-      pos=TestAlmacen.controlCodigo(); //Codido pedido
+      posicion=TestAlmacen.controlCodigo(); //Pedir codigo
       
-      if(!Almacen.modificarMercancia((num*-1), pos)) {
+      if(!Almacen.modificarMercancia((cantidad*-1), posicion)) {
         System.out.println("Mercancia no modificada");
       }
       else {
         System.out.println("Mercancia correctamente modificada");
         Almacen.imprimirTodos();
       }
+    }
+  }
+  
+  /*
+   * Esta funcion pide una cantidad al usuario y la devuelve
+   * 
+   * @param String
+   * 
+   * @return int
+   */
+  
+  public static int pedirCantidad(String tipoModificacion) {
+    int cantidad;
+    Scanner s=new Scanner(System.in);
+    if(tipoModificacion.equals("I")) {
+      do {//Cantidad pedida
+        System.out.println("Inserta la cantidad para incrementar: ");
+        cantidad=s.nextInt();
+        s.nextLine();
+      }while(cantidad<0);
+    }
+    else {
+      do {//Cantidad pedida
+        System.out.println("Inserta la cantidad para decrementar: ");
+        cantidad=s.nextInt();
+        s.nextLine();
+      }while(cantidad<0);
+    }
+    return cantidad;
+  }
+  
+  /*
+   * Esta funcion pide el tipo de modificacion sobre la cantidad de un articulo.
+   * Es decir, si el usuario quiere incrementar o decrementar unidades de un articulo
+   * 
+   * @return String
+   */
+  
+  public static String pedirTipoModificacion() {
+    String letraMayuscula,letra;
+    Scanner s=new Scanner(System.in);
+    do {//Pedir datos 
+      System.out.println("Deseas incrementar(I) o decrementar(D): ");
+      letra=s.nextLine();
+      letraMayuscula=letra.toUpperCase();
+    }while(!letraMayuscula.equals("D") && !letraMayuscula.equals("I"));
+    return letraMayuscula;
   }
 }
